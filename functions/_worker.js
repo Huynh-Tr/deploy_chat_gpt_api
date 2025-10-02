@@ -4,7 +4,7 @@
  */
 
 export default {
-  async fetch(request, env, ctx) {
+  async onRequest(request, env, ctx) {
     const url = new URL(request.url);
     
     // Handle CORS preflight requests
