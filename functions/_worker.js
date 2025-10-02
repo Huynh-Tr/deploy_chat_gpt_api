@@ -1,54 +1,50 @@
 /**
- * Cloudflare Pages Worker for handling API requests and serving the web app
- * This file should be placed in the root directory for Cloudflare Pages
+ * Cloudflare Pages Functions Worker
+ * This file should be in the functions/ directory for Cloudflare Pages
  */
 
-// Handle incoming requests
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
-async function handleRequest(request) {
-  const url = new URL(request.url)
-  
-  // Handle CORS preflight requests
-  if (request.method === 'OPTIONS') {
-    return handleCORS()
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    
+    // Handle CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return handleCORS();
+    }
+    
+    // Serve the main HTML file for the root path
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      return new Response(getHTML(), {
+        headers: {
+          'Content-Type': 'text/html',
+          ...getCORSHeaders()
+        }
+      });
+    }
+    
+    // Handle API endpoint for n8n integration
+    if (url.pathname === '/api/chat' && request.method === 'POST') {
+      return handleChatAPI(request);
+    }
+    
+    // Handle webhook endpoint for n8n
+    if (url.pathname === '/api/webhook' && request.method === 'POST') {
+      return handleWebhook(request);
+    }
+    
+    // Return 404 for other paths
+    return new Response('Not Found', { 
+      status: 404,
+      headers: getCORSHeaders()
+    });
   }
-  
-  // Serve the main HTML file for the root path
-  if (url.pathname === '/' || url.pathname === '/index.html') {
-    return new Response(getHTML(), {
-      headers: {
-        'Content-Type': 'text/html',
-        ...getCORSHeaders()
-      }
-    })
-  }
-  
-  // Handle API endpoint for n8n integration
-  if (url.pathname === '/api/chat' && request.method === 'POST') {
-    return handleChatAPI(request)
-  }
-  
-  // Handle webhook endpoint for n8n
-  if (url.pathname === '/api/webhook' && request.method === 'POST') {
-    return handleWebhook(request)
-  }
-  
-  // For Cloudflare Pages, try to serve static files first
-  // This will be handled by Cloudflare Pages for static assets
-  return new Response('Not Found', { 
-    status: 404,
-    headers: getCORSHeaders()
-  })
-}
+};
 
 // Handle CORS preflight requests
 function handleCORS() {
   return new Response(null, {
     headers: getCORSHeaders()
-  })
+  });
 }
 
 // Get CORS headers
@@ -57,14 +53,14 @@ function getCORSHeaders() {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  }
+  };
 }
 
 // Handle chat API requests
 async function handleChatAPI(request) {
   try {
-    const body = await request.json()
-    const { message, model = 'gpt-5-nano', stream = false } = body
+    const body = await request.json();
+    const { message, model = 'gpt-5-nano', stream = false } = body;
     
     if (!message) {
       return new Response(JSON.stringify({ error: 'Message is required' }), {
@@ -73,24 +69,23 @@ async function handleChatAPI(request) {
           'Content-Type': 'application/json',
           ...getCORSHeaders()
         }
-      })
+      });
     }
     
-    // In a real implementation, you would call the Puter API here
-    // For now, we'll return a mock response
+    // Mock response for now
     const response = {
       message: `AI Response to: "${message}". This is a mock response. The actual implementation would call Puter API with model: ${model}`,
       model: model,
       timestamp: new Date().toISOString(),
       note: "This is running on Cloudflare Pages. For full AI functionality, implement Puter API integration."
-    }
+    };
     
     return new Response(JSON.stringify(response), {
       headers: {
         'Content-Type': 'application/json',
         ...getCORSHeaders()
       }
-    })
+    });
     
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
@@ -99,32 +94,32 @@ async function handleChatAPI(request) {
         'Content-Type': 'application/json',
         ...getCORSHeaders()
       }
-    })
+    });
   }
 }
 
 // Handle webhook requests from n8n
 async function handleWebhook(request) {
   try {
-    const body = await request.json()
+    const body = await request.json();
     
-    // Log the webhook data (you can store this in KV or send to external service)
-    console.log('Webhook received:', JSON.stringify(body))
+    // Log the webhook data
+    console.log('Webhook received:', JSON.stringify(body));
     
-    // Process the webhook data and potentially trigger AI response
+    // Process the webhook data
     const response = {
       status: 'received',
       message: 'Webhook processed successfully',
       timestamp: new Date().toISOString(),
       data: body
-    }
+    };
     
     return new Response(JSON.stringify(response), {
       headers: {
         'Content-Type': 'application/json',
         ...getCORSHeaders()
       }
-    })
+    });
     
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Invalid webhook data' }), {
@@ -133,7 +128,7 @@ async function handleWebhook(request) {
         'Content-Type': 'application/json',
         ...getCORSHeaders()
       }
-    })
+    });
   }
 }
 
@@ -183,6 +178,16 @@ function getHTML() {
             color: #666;
             margin-bottom: 40px;
             font-size: 1.1em;
+        }
+        
+        .status-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
         
         .input-group {
@@ -293,16 +298,6 @@ function getHTML() {
         .model-selector select {
             flex: 1;
         }
-        
-        .status-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-        }
     </style>
 </head>
 <body>
@@ -311,7 +306,7 @@ function getHTML() {
         <p class="subtitle">Powered by Cloudflare Pages + Puter API</p>
         
         <div class="status-info">
-            <strong>📡 Status:</strong> Running on Cloudflare Pages<br>
+            <strong>✅ Status:</strong> API is now working!<br>
             <strong>🔗 API Endpoint:</strong> <a href="/api/chat" target="_blank">/api/chat</a><br>
             <strong>🎯 Webhook:</strong> <a href="/api/webhook" target="_blank">/api/webhook</a>
         </div>
@@ -467,5 +462,5 @@ function getHTML() {
         });
     </script>
 </body>
-</html>`
+</html>`;
 }
