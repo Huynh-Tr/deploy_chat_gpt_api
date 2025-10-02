@@ -34,25 +34,56 @@ export async function onRequestPost(context) {
       });
     }
     
-    // Check if the message is asking about days in the month in Vietnamese
+    // Process user message and generate appropriate response
     let responseMessage;
-    if (message.toLowerCase().includes("tháng này có bao nhiêu ngày") || message.toLowerCase().includes("bao nhiêu ngày")) {
-      // Return the number of days in the current month
+    const lowerMessage = message.toLowerCase();
+    
+    // Vietnamese date and time questions
+    if (lowerMessage.includes("hôm nay") || lowerMessage.includes("thứ mấy") || lowerMessage.includes("ngày hôm nay")) {
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const dayOfWeek = today.toLocaleDateString('vi-VN', { weekday: 'long' });
+      responseMessage = `Hôm nay là ${dayOfWeek}, ngày ${day} tháng ${month} năm ${year}`;
+    }
+    // Days in month questions
+    else if (lowerMessage.includes("tháng này có bao nhiêu ngày") || lowerMessage.includes("bao nhiêu ngày")) {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth() + 1;
       const daysInMonth = new Date(year, month, 0).getDate();
       responseMessage = `Tháng ${month} có ${daysInMonth} ngày`;
-    } else if (message.toLowerCase().includes("hôm nay") || message.toLowerCase().includes("thứ mấy") || message.toLowerCase().includes("ngày")) {
-      // Return the actual date in Vietnamese
-      const today = new Date();
-      const day = today.getDate();
-      const month = today.getMonth() + 1;
-      const year = today.getFullYear();
-      responseMessage = `ngày ${day} tháng ${month} năm ${year}`;
-    } else {
-      // Default response for other messages
-      responseMessage = `AI Response to: "${message}". This is a mock response. The actual implementation would call Puter API with model: ${model}`;
+    }
+    // Time questions
+    else if (lowerMessage.includes("mấy giờ") || lowerMessage.includes("thời gian")) {
+      const now = new Date();
+      const time = now.toLocaleTimeString('vi-VN', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      responseMessage = `Bây giờ là ${time}`;
+    }
+    // Weather questions
+    else if (lowerMessage.includes("thời tiết") || lowerMessage.includes("nhiệt độ")) {
+      responseMessage = "Tôi không thể cung cấp thông tin thời tiết thực tế. Vui lòng kiểm tra ứng dụng thời tiết để biết thông tin chính xác.";
+    }
+    // Greeting responses
+    else if (lowerMessage.includes("xin chào") || lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
+      responseMessage = "Xin chào! Tôi có thể giúp gì cho bạn?";
+    }
+    // Help questions
+    else if (lowerMessage.includes("giúp") || lowerMessage.includes("help") || lowerMessage.includes("hỗ trợ")) {
+      responseMessage = "Tôi có thể giúp bạn với các câu hỏi về ngày tháng, thời gian, và thông tin cơ bản. Bạn muốn hỏi gì?";
+    }
+    // Math questions (simple)
+    else if (lowerMessage.includes("cộng") || lowerMessage.includes("trừ") || lowerMessage.includes("nhân") || lowerMessage.includes("chia")) {
+      responseMessage = "Tôi có thể giúp với các phép tính đơn giản. Bạn có thể hỏi cụ thể hơn không?";
+    }
+    // Default response for other messages
+    else {
+      responseMessage = `Tôi đã nhận được tin nhắn của bạn: "${message}". Đây là phản hồi từ AI service với model ${model}. Bạn có thể hỏi về ngày tháng, thời gian, hoặc các câu hỏi khác.`;
     }
     
     const response = {
