@@ -1,11 +1,2 @@
-name = "chat-gpt-api"
-compatibility_date = "2024-12-18"
-
 # Cloudflare Pages configuration
 pages_build_output_dir = "."
-
-[env.production]
-name = "chat-gpt-api"
-
-[env.staging]
-name = "chat-gpt-api-staging"
