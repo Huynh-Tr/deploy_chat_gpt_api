@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "node deploy.js",
+    "deploy:pages": "node deploy-to-pages.js",
     "deploy:staging": "wrangler deploy --env staging",
     "deploy:prod": "wrangler deploy",
     "start": "wrangler dev --local",
-    "tail": "wrangler tail"
+    "tail": "wrangler tail",
+    "test:pages": "node test-pages-deployment.js",
+    "test:webhook": "node test-webhook.js"
   },
   "keywords": [
     "cloudflare",

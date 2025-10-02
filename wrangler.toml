@@ -1,21 +1,13 @@
-name = "puter-api-webapp"
-main = "src/worker.js"
+name = "chat-gpt-api"
+main = "_worker.js"
 compatibility_date = "2024-12-18"
 
+# Cloudflare Pages configuration
 [env.production]
-name = "puter-api-webapp"
+name = "chat-gpt-api"
 
 [env.staging]
-name = "puter-api-webapp-staging"
+name = "chat-gpt-api-staging"
 
-# Static assets configuration
-[[routes]]
-pattern = "/*"
-custom_domain = false
-
-# KV namespace for storing data (optional)
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "your-kv-namespace-id"
-# preview_id = "your-preview-kv-namespace-id"
-
+# For Cloudflare Pages, we don't need routes configuration
+# The _worker.js file will handle the routing

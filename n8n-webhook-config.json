@@ -1,0 +1,59 @@
+{
+  "webhook_url": "https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a",
+  "description": "Your n8n webhook endpoint for receiving messages",
+  "workflow_configuration": {
+    "name": "AI Chat Integration with Cloudflare Worker",
+    "description": "Workflow that receives messages via webhook and sends them to Cloudflare Worker API",
+    "trigger": {
+      "type": "webhook",
+      "url": "https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a",
+      "method": "POST"
+    },
+    "steps": [
+      {
+        "name": "Webhook Trigger",
+        "type": "webhook",
+        "config": {
+          "httpMethod": "POST",
+          "path": "webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a",
+          "responseMode": "responseNode"
+        }
+      },
+      {
+        "name": "Send to Cloudflare Worker",
+        "type": "httpRequest",
+        "config": {
+          "url": "https://your-worker-domain.workers.dev/api/chat",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "message": "={{ $json.message || 'Hello from n8n!' }}",
+            "model": "={{ $json.model || 'gpt-5-nano' }}",
+            "stream": "={{ $json.stream || false }}"
+          }
+        }
+      },
+      {
+        "name": "Respond to Webhook",
+        "type": "respondToWebhook",
+        "config": {
+          "respondWith": "json",
+          "responseBody": "={{ {\n  \"success\": true,\n  \"original_message\": $('Webhook Trigger').item.json.message,\n  \"ai_response\": $('Send to Cloudflare Worker').item.json.message,\n  \"model_used\": $('Send to Cloudflare Worker').item.json.model,\n  \"timestamp\": $('Send to Cloudflare Worker').item.json.timestamp\n} }}"
+        }
+      }
+    ]
+  },
+  "curl_examples": {
+    "send_message_to_webhook": "curl -X POST https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"message\": \"What is machine learning?\",\n    \"model\": \"gpt-5-nano\"\n  }'",
+    "test_webhook": "curl -X POST https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"message\": \"Hello from test\",\n    \"model\": \"gpt-4o\"\n  }'"
+  },
+  "expected_response": {
+    "success": true,
+    "original_message": "What is machine learning?",
+    "ai_response": "Machine learning is a subset of artificial intelligence...",
+    "model_used": "gpt-5-nano",
+    "timestamp": "2024-12-18T10:30:00.000Z"
+  }
+}
