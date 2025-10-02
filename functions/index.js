@@ -34,9 +34,22 @@ export async function onRequestPost(context) {
       });
     }
     
-    // Mock response for Vietnamese message
+    // Check if the message is asking for today's date in Vietnamese
+    let responseMessage;
+    if (message.toLowerCase().includes("hôm nay") || message.toLowerCase().includes("thứ mấy") || message.toLowerCase().includes("ngày")) {
+      // Return the actual date in Vietnamese
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      responseMessage = `ngày ${day} tháng ${month} năm ${year}`;
+    } else {
+      // Default response for other messages
+      responseMessage = `AI Response to: "${message}". This is a mock response. The actual implementation would call Puter API with model: ${model}`;
+    }
+    
     const response = {
-      message: `AI Response to: "${message}". This is a mock response. The actual implementation would call Puter API with model: ${model}`,
+      message: responseMessage,
       model: model,
       timestamp: new Date().toISOString(),
       note: "This is running on Cloudflare Pages Functions. For full AI functionality, implement Puter API integration."
