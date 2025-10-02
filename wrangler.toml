@@ -1,2 +1,2 @@
-# Cloudflare Pages configuration
+name = "chat-gpt-api"
 pages_build_output_dir = "."
