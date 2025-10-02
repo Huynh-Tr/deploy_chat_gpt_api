@@ -15,7 +15,8 @@
     "test:webhook": "node test-webhook.js",
     "test:workflow": "node test-n8n-workflow.js",
     "test:webhook-url": "node test-webhook-url.js",
-    "verify-webhook": "node verify-webhook.js"
+    "verify-webhook": "node verify-webhook.js",
+    "test:api-manual": "node test-api-manual.js"
   },
   "keywords": [
     "cloudflare",
