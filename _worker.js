@@ -3,11 +3,8 @@
  * This file should be in the functions/ directory for Cloudflare Pages
  */
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-
-async function handleRequest(request) {
+export default {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
     // Handle CORS preflight requests
@@ -466,6 +463,7 @@ function getHTML() {
     </script>
 </body>
 </html>`;
-} 
+  }
+}; 
  
  
