@@ -1,0 +1,21 @@
+name = "puter-api-webapp"
+main = "src/worker.js"
+compatibility_date = "2024-12-18"
+
+[env.production]
+name = "puter-api-webapp"
+
+[env.staging]
+name = "puter-api-webapp-staging"
+
+# Static assets configuration
+[[routes]]
+pattern = "/*"
+custom_domain = false
+
+# KV namespace for storing data (optional)
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
