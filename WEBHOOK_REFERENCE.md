@@ -5,6 +5,11 @@
 https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a
 ```
 
+## Webhook Path (for n8n configuration)
+```
+webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a
+```
+
 ## Quick cURL Test
 ```bash
 curl -X POST https://vn.n8n.asia/webhook-test/1d2a2e0c-3a12-4c72-9efd-174d67247e1a \

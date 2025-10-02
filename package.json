@@ -14,7 +14,8 @@
     "test:pages": "node test-pages-deployment.js",
     "test:webhook": "node test-webhook.js",
     "test:workflow": "node test-n8n-workflow.js",
-    "test:webhook-url": "node test-webhook-url.js"
+    "test:webhook-url": "node test-webhook-url.js",
+    "verify-webhook": "node verify-webhook.js"
   },
   "keywords": [
     "cloudflare",
