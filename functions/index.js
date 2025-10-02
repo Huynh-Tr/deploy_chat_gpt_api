@@ -34,9 +34,16 @@ export async function onRequestPost(context) {
       });
     }
     
-    // Check if the message is asking for today's date in Vietnamese
+    // Check if the message is asking about days in the month in Vietnamese
     let responseMessage;
-    if (message.toLowerCase().includes("hôm nay") || message.toLowerCase().includes("thứ mấy") || message.toLowerCase().includes("ngày")) {
+    if (message.toLowerCase().includes("tháng này có bao nhiêu ngày") || message.toLowerCase().includes("bao nhiêu ngày")) {
+      // Return the number of days in the current month
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      responseMessage = `Tháng ${month} có ${daysInMonth} ngày`;
+    } else if (message.toLowerCase().includes("hôm nay") || message.toLowerCase().includes("thứ mấy") || message.toLowerCase().includes("ngày")) {
       // Return the actual date in Vietnamese
       const today = new Date();
       const day = today.getDate();
